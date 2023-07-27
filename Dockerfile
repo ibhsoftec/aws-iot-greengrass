@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT-0
 
 #FROM amazonlinux:2
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 # Replace the args to lock to a specific version
 ARG GREENGRASS_RELEASE_VERSION=2.10.3
@@ -35,7 +35,7 @@ RUN env
 COPY "greengrass-entrypoint.sh" /
 
 RUN apt update -y 
-RUN apt install -y python3.7
+#RUN apt install -y python3.7
 RUN apt install -y python3.8
 RUN apt install -y tar unzip wget sudo procps 
 RUN apt install -y default-jdk
@@ -57,6 +57,7 @@ RUN chmod +x /modify-sudoers.sh
 RUN ./modify-sudoers.sh
 
 # Install SSH Server
+USER root
 RUN apt install -y openssh-server
 COPY sshd_config /etc/ssh/sshd_config
 RUN echo "root:root" | chpasswd 
@@ -65,5 +66,3 @@ COPY "ssh-greengrass-entrypoint.sh" /
 RUN ["chmod", "+x", "greengrass-entrypoint.sh"]
 RUN ["chmod", "+x", "ssh-greengrass-entrypoint.sh"]
 EXPOSE 22
-
-ENTRYPOINT ["/greengrass-entrypoint.sh"]
